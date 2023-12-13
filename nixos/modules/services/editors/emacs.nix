@@ -74,6 +74,14 @@ in
       '';
     };
 
+    startupTimeout = mkOption {
+      type = types.str;
+      default = "90s";
+      description = lib.mdDoc ''
+	Timeout for starting the Emacs daemon.
+      '';
+    };
+
     startWithGraphical = mkOption {
       type = types.bool;
       default = config.services.xserver.enable;
@@ -93,6 +101,7 @@ in
         ExecStart = "${pkgs.bash}/bin/bash -c 'source ${config.system.build.setEnvironment}; exec ${cfg.package}/bin/emacs --daemon'";
         ExecStop = "${cfg.package}/bin/emacsclient --eval (kill-emacs)";
         Restart = "always";
+        TimeoutStartSec = cfg.startupTimeout;
       };
 
       unitConfig = optionalAttrs cfg.startWithGraphical {
